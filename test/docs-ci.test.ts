@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,7 +14,7 @@ const root = join(testDirectory, '..');
  */
 describe('documentation publishing setup', () => {
   /**
-   * Verifies the docs site landing page exists.
+   * Verifies a GitHub Actions workflow publishes generated TypeDoc output.
    *
    * @returns {void} No return value
    * @example
@@ -22,57 +22,19 @@ describe('documentation publishing setup', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('creates a docs index page for published reports', () => {
-    const docsIndexPath = join(root, 'docs-site', 'index.html');
-
-    expect(existsSync(docsIndexPath)).toBe(true);
-    expect(readFileSync(docsIndexPath, 'utf8')).toContain(
-      'AI-Coding-Sync Documentation'
-    );
-  });
-
-  /**
-   * Verifies the docs site builder publishes TypeDoc output into docs-site/api.
-   *
-   * @returns {void} No return value
-   * @example
-   * // Executed by Bun test
-   * @since 0.1.0
-   * @category Tests
-   */
-  test('copies generated TypeDoc output into the published docs site builder script', () => {
-    const builderScript = readFileSync(
-      join(root, 'scripts', 'build-docs-site.ts'),
-      'utf8'
-    );
-
-    expect(builderScript).toContain("join(docsSiteDirectory, 'api')");
-    expect(builderScript).toContain(
-      'await copyApiDocs(docsDirectory, apiOutputDirectory);'
-    );
-    expect(builderScript).toContain('./api/index.html');
-  });
-
-  /**
-   * Verifies a GitHub Actions workflow publishes documentation artifacts.
-   *
-   * @returns {void} No return value
-   * @example
-   * // Executed by Bun test
-   * @since 0.1.0
-   * @category Tests
-   */
-  test('creates a docs publish workflow', () => {
+  test('publishes docs directory directly to GitHub Pages', () => {
     const workflowPath = join(root, '.github', 'workflows', 'publish-docs.yml');
     const workflow = readFileSync(workflowPath, 'utf8');
 
     expect(workflow).toContain('Deploy docs to GitHub Pages');
-    expect(workflow).toContain('bun test --coverage');
-    expect(workflow).toContain('actions/deploy-pages');
+    expect(workflow).toContain('bun run check');
+    expect(workflow).toContain('bun run docs');
+    expect(workflow).toContain('path: docs');
+    expect(workflow).not.toContain('docs-site');
   });
 
   /**
-   * Verifies package scripts expose docs site generation.
+   * Verifies package scripts expose direct TypeDoc generation commands.
    *
    * @returns {void} No return value
    * @example
@@ -80,14 +42,16 @@ describe('documentation publishing setup', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('adds scripts for docs site generation', () => {
+  test('keeps direct docs scripts without docs-site packaging helpers', () => {
     const packageJson = JSON.parse(
       readFileSync(join(root, 'package.json'), 'utf8')
     ) as {
       scripts: Record<string, string>;
     };
 
-    expect(packageJson.scripts['docs:site']).toBeDefined();
-    expect(packageJson.scripts['docs:metrics']).toBeDefined();
+    expect(packageJson.scripts.docs).toBe('typedoc');
+    expect(packageJson.scripts['docs:check']).toContain('typedoc --json');
+    expect(packageJson.scripts['docs:site']).toBeUndefined();
+    expect(packageJson.scripts['docs:metrics']).toBeUndefined();
   });
 });

@@ -32,16 +32,13 @@ jobs:
       - name: Verify project
         run: bun run check
 
-      - name: Generate coverage
-        run: bun test --coverage
-
-      - name: Build docs site
-        run: bun run docs:site
+      - name: Build TypeDoc output
+        run: bun run docs
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs-site
+          path: docs
 
   deploy:
     environment:

@@ -17,9 +17,7 @@
     "test:coverage": "bun test --coverage",
     "docs": "typedoc",
     "docs:check": "typedoc --json docs/api.json",
-    "check": "bun run typecheck && bun run lint && bun run format:check && bun run docs:check && bun run test",
-    "docs:metrics": "bun run scripts/generate-docs-metrics.ts",
-    "docs:site": "bun run docs && bun run test:coverage && bun run docs:metrics && bun run scripts/build-docs-site.ts"
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run docs:check && bun run test"
   },
   "devDependencies": {
     "@types/bun": "latest",

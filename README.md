@@ -107,8 +107,6 @@ test/
 ## API Documentation
 
 - Generated API docs: `docs/`
-- Published static docs portal: `docs-site/`
-- Docs metrics JSON: `docs-site/data/metrics.json`
 - GitHub Actions workflow: `.github/workflows/publish-docs.yml`
 
 ### Publish Pipeline
@@ -119,18 +117,12 @@ The repository now includes an automated GitHub Pages publishing workflow that:
 2. Runs `bun run check`
 3. Runs `bun test --coverage`
 4. Builds TypeDoc output
-5. Builds a docs portal page that publishes:
-   - JSDoc/TypeDoc API docs
-   - coverage summary
-   - test pass/fail summary
-   - verification status
+5. Publishes the generated TypeDoc site from `docs/` directly to GitHub Pages, including API references and project documentation.
 
 ### Commands
 
 ```bash
 bun run docs          # Generate TypeDoc API docs
-bun run docs:metrics  # Generate docs metrics JSON
-bun run docs:site     # Build publishable docs site
 ```
 
 ## CLI Usage
