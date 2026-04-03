@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
-const syncModeSchema = z.enum(['auto', 'git', 'file', 'link']);
-const mappingModeSchema = z.enum(['inherit', 'auto', 'git', 'file', 'link']);
+const sourceTypeSchema = z.enum(['auto', 'git', 'file']);
+const deployModeSchema = z.enum(['link', 'copy']);
+const mappingSourceTypeSchema = z.enum(['inherit', 'auto', 'git', 'file']);
+const mappingDeployModeSchema = z.enum(['inherit', 'link', 'copy']);
 const strategySchema = z.enum(['two-way', 'push-only', 'pull-only']);
 const conflictPolicySchema = z.enum(['local', 'remote', 'ask', 'backup']);
 
@@ -36,34 +38,43 @@ const webDavConfigSchema = z.object({
   options: webDavOptionsSchema,
 });
 
-const profileConfigSchema = z.object({
-  inherit: z.boolean().optional(),
-  syncId: z.string().min(1).nullable().optional(),
-  webdav: webDavConfigSchema.partial().optional(),
-  mode: syncModeSchema.optional(),
-  strategy: strategySchema.optional(),
-  conflict: conflictPolicySchema.optional(),
-  backupCount: z.number().int().nonnegative().optional(),
-});
+const profileConfigSchema = z
+  .object({
+    inherit: z.boolean().optional(),
+    syncId: z.string().min(1).nullable().optional(),
+    webdav: webDavConfigSchema.partial().optional(),
+    sourceType: sourceTypeSchema.optional(),
+    deployMode: deployModeSchema.optional(),
+    strategy: strategySchema.optional(),
+    conflict: conflictPolicySchema.optional(),
+    backupCount: z.number().int().nonnegative().optional(),
+  })
+  .strict();
 
-const mappingConfigSchema = z.object({
-  name: z.string().min(1),
-  local: z.string().min(1),
-  remotePath: z.string().min(1),
-  profile: z.string().min(1).optional(),
-  mode: mappingModeSchema.optional(),
-  ignore: z.array(z.string().min(1)).optional(),
-  preSync: z.string().min(1).nullable().optional(),
-  postSync: z.string().min(1).nullable().optional(),
-  respectGitignore: z.boolean().optional(),
-  conflict: conflictPolicySchema.optional(),
-});
+const mappingConfigSchema = z
+  .object({
+    name: z.string().min(1),
+    local: z.string().min(1),
+    remotePath: z.string().min(1),
+    sourcePath: z.string().min(1).optional(),
+    profile: z.string().min(1).optional(),
+    sourceType: mappingSourceTypeSchema.optional(),
+    deployMode: mappingDeployModeSchema.optional(),
+    ignore: z.array(z.string().min(1)).optional(),
+    preSync: z.string().min(1).nullable().optional(),
+    postSync: z.string().min(1).nullable().optional(),
+    respectGitignore: z.boolean().optional(),
+    conflict: conflictPolicySchema.optional(),
+  })
+  .strict();
 
-const hooksSchema = z.object({
-  'pre-sync': z.string().min(1).nullable().optional(),
-  'post-sync': z.string().min(1).nullable().optional(),
-  'on-conflict': z.string().min(1).nullable().optional(),
-});
+const hooksSchema = z
+  .object({
+    'pre-sync': z.string().min(1).nullable().optional(),
+    'post-sync': z.string().min(1).nullable().optional(),
+    'on-conflict': z.string().min(1).nullable().optional(),
+  })
+  .strict();
 
 /**
  * Root configuration schema for the application.

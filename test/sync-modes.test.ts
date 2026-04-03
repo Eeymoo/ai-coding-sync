@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import {
+  lstat,
+  mkdir,
+  mkdtemp,
+  readlink,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { syncFileMapping } from '../src/sync/file-sync';
@@ -33,19 +40,23 @@ describe('sync mode helpers', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('builds a file manifest from local files', async () => {
-    const localPath = join(tempRoot, 'claude');
-    await mkdir(localPath, { recursive: true });
-    await writeFile(join(localPath, 'settings.json'), '{"a":1}', 'utf8');
+  test('copies source files into target directory for copy deploy mode', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'claude');
+    const targetPath = join(tempRoot, 'targets', 'claude');
+    await mkdir(sourcePath, { recursive: true });
+    await writeFile(join(sourcePath, 'settings.json'), '{"a":1}', 'utf8');
 
     const result = await syncFileMapping({
       name: 'claude',
-      local: localPath,
+      local: targetPath,
       remotePath: 'claude/v1',
-    });
+      sourcePath,
+      deployMode: 'copy',
+    } as MappingConfig);
 
     expect(result.manifest.entries).toHaveLength(1);
     expect(result.manifest.entries[0]?.path).toBe('settings.json');
+    expect(Bun.file(join(targetPath, 'settings.json'))).toBeDefined();
   });
 
   /**
@@ -57,15 +68,17 @@ describe('sync mode helpers', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('evaluates git repository status', async () => {
-    const localPath = join(tempRoot, 'repo');
-    await mkdir(join(localPath, '.git'), { recursive: true });
+  test('evaluates git repository status from source directory', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'repo');
+    const targetPath = join(tempRoot, 'targets', 'repo');
+    await mkdir(join(sourcePath, '.git'), { recursive: true });
 
     const result = await syncGitMapping({
       name: 'claude',
-      local: localPath,
+      local: targetPath,
       remotePath: 'claude/v1',
-    });
+      sourcePath,
+    } as MappingConfig);
 
     expect(result.isGitRepository).toBe(true);
     expect(result.backupBranch).toContain('ai-sync-backup');
@@ -80,19 +93,22 @@ describe('sync mode helpers', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('builds link mode cache and symlink plan', async () => {
-    const localPath = join(tempRoot, 'cursor');
-    const cacheRoot = join(tempRoot, 'cache');
-    await mkdir(localPath, { recursive: true });
+  test('creates a symlink from target to source for link deploy mode', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'cursor');
+    const targetPath = join(tempRoot, 'targets', 'cursor');
+    await mkdir(sourcePath, { recursive: true });
 
     const result = await syncLinkMapping({
       name: 'cursor',
-      local: localPath,
+      local: targetPath,
       remotePath: 'cursor/v1',
-      preSync: cacheRoot,
+      sourcePath,
+      deployMode: 'link',
     } as MappingConfig);
 
-    expect(result.cachePath).toContain('cursor');
-    expect(result.linkPath).toBe(localPath);
+    const stats = await lstat(targetPath);
+    expect(stats.isSymbolicLink()).toBe(true);
+    expect(await readlink(targetPath)).toBe(sourcePath);
+    expect(result.linkPath).toBe(targetPath);
   });
 });

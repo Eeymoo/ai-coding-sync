@@ -26,7 +26,7 @@ This checklist maps the confirmed full-spec requirements for AI-Coding-Sync into
 ## Phase 1 — CLI & Configuration System
 
 - [x] Implement CLI command routing for `init`, `sync`, `push`, `pull`, `status`, `doctor`, `config get`, `config set`
-- [x] Implement CLI global option parsing and overrides (`profile`, `mode`, `force`, `yes`, `dry-run`, etc.)
+- [x] Implement CLI global option parsing and overrides (`profile`, `sourceType`, `deployMode`, `force`, `yes`, `dry-run`, etc.)
 - [x] Implement configuration file discovery and loading from `~/.config/ai-coding-sync`
 - [x] Implement Zod-based configuration schema validation
 - [x] Implement path expansion for `~` and environment variables
@@ -67,7 +67,7 @@ This checklist maps the confirmed full-spec requirements for AI-Coding-Sync into
 - [x] Implement Git mode remote-state fetch/store integration via WebDAV
 - [x] Implement Link mode cache layout and symlink plan generation
 - [x] Implement Link mode pull/apply workflow for Unix-like systems
-- [x] Implement automatic mode selection and explicit mode override behavior
+- [x] Implement automatic sourceType detection and explicit deployMode/sourceType override behavior
 
 ## Phase 5 — User Experience, Hooks, and Diagnostics
 

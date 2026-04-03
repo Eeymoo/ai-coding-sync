@@ -1,4 +1,4 @@
-import { mkdir, readdir, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, stat, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 import type { MappingConfig } from '../types';
@@ -30,6 +30,16 @@ export interface FileSyncResult {
   manifestPath: string;
 }
 
+/**
+ * Recursively collects files from a root directory.
+ *
+ * @param {string} root - Directory to scan
+ * @returns {Promise<string[]>} Absolute file paths under the directory
+ * @example
+ * const files = await collectFiles('/tmp/source');
+ * @since 0.1.0
+ * @category Sync
+ */
 async function collectFiles(root: string): Promise<string[]> {
   const entries = await readdir(root, { withFileTypes: true });
   const files: string[] = [];
@@ -48,6 +58,42 @@ async function collectFiles(root: string): Promise<string[]> {
 }
 
 /**
+ * Resolves the source directory for file deployment.
+ *
+ * @param {MappingConfig} mapping - Mapping being synchronized
+ * @returns {string} Source directory path
+ * @example
+ * const sourceRoot = resolveSourceRoot(mapping);
+ * @since 0.1.0
+ * @category Sync
+ */
+function resolveSourceRoot(mapping: MappingConfig): string {
+  return mapping.sourcePath ?? mapping.local;
+}
+
+/**
+ * Applies copy deployment from source to target when needed.
+ *
+ * @param {MappingConfig} mapping - Mapping being synchronized
+ * @returns {Promise<string>} Effective root used for manifest generation
+ * @example
+ * const effectiveRoot = await applyCopyDeployment(mapping);
+ * @since 0.1.0
+ * @category Sync
+ */
+async function applyCopyDeployment(mapping: MappingConfig): Promise<string> {
+  const sourceRoot = resolveSourceRoot(mapping);
+
+  if (mapping.deployMode === 'copy' && sourceRoot !== mapping.local) {
+    await mkdir(mapping.local, { recursive: true });
+    await cp(sourceRoot, mapping.local, { recursive: true, force: true });
+    return mapping.local;
+  }
+
+  return sourceRoot;
+}
+
+/**
  * Plans File mode synchronization operations.
  *
  * @param {MappingConfig} mapping - Mapping to evaluate
@@ -60,7 +106,8 @@ async function collectFiles(root: string): Promise<string[]> {
 export async function syncFileMapping(
   mapping: MappingConfig
 ): Promise<FileSyncResult> {
-  const files = await collectFiles(mapping.local);
+  const effectiveRoot = await applyCopyDeployment(mapping);
+  const files = await collectFiles(effectiveRoot);
   const entries = await Promise.all(
     files.map(async (filePath) => {
       const file = Bun.file(filePath);
@@ -70,7 +117,7 @@ export async function syncFileMapping(
         .digest('hex');
 
       return {
-        path: relative(mapping.local, filePath),
+        path: relative(effectiveRoot, filePath),
         checksum,
         mtime: fileStats.mtimeMs,
         size: fileStats.size,

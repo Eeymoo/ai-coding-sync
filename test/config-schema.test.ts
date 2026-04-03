@@ -81,7 +81,8 @@ describe('configuration schemas', () => {
         profiles: {
           default: {
             inherit: true,
-            mode: 'auto',
+            sourceType: 'auto',
+            deployMode: 'link',
             strategy: 'two-way',
             conflict: 'ask',
             backupCount: 5,
@@ -93,7 +94,8 @@ describe('configuration schemas', () => {
             local: '~/.claude',
             remotePath: 'claude/v1',
             profile: 'default',
-            mode: 'inherit',
+            sourceType: 'inherit',
+            deployMode: 'inherit',
             ignore: ['.DS_Store'],
           },
         ],
@@ -108,7 +110,7 @@ describe('configuration schemas', () => {
   });
 
   /**
-   * Verifies invalid mapping mode is rejected.
+   * Verifies invalid mapping source type is rejected.
    *
    * @returns {void} No return value
    * @example
@@ -116,7 +118,7 @@ describe('configuration schemas', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('rejects invalid mapping mode', () => {
+  test('rejects invalid mapping source type', () => {
     expect(() =>
       appConfigSchema.parse({
         version: '1.0.0',
@@ -143,7 +145,56 @@ describe('configuration schemas', () => {
             name: 'claude',
             local: '~/.claude',
             remotePath: 'claude/v1',
-            mode: 'broken-mode',
+            sourceType: 'broken-mode',
+          },
+        ],
+        ignoreGlobal: [],
+        hooks: {},
+      })
+    ).toThrow();
+  });
+
+  /**
+   * Verifies legacy mode fields are rejected in the new schema.
+   *
+   * @returns {void} No return value
+   * @example
+   * // Executed by Bun test
+   * @since 0.1.0
+   * @category Tests
+   */
+  test('rejects legacy mode fields in profiles and mappings', () => {
+    expect(() =>
+      appConfigSchema.parse({
+        version: '1.0.0',
+        syncId: 'device',
+        webdav: {
+          endpoint: 'https://nas.example.com/webdav',
+          auth: {
+            type: 'env',
+            username: '${WEBDAV_USER}',
+            password: '${WEBDAV_PASS}',
+          },
+          remoteRoot: '/ai-sync/${syncId}',
+          options: {
+            depth: '1',
+            verifySsl: true,
+            timeout: 30000,
+            maxRetries: 3,
+            concurrency: 1,
+          },
+        },
+        profiles: {
+          default: {
+            mode: 'git',
+          },
+        },
+        mappings: [
+          {
+            name: 'claude',
+            local: '~/.claude',
+            remotePath: 'claude/v1',
+            mode: 'link',
           },
         ],
         ignoreGlobal: [],

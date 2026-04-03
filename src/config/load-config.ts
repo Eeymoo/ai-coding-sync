@@ -4,9 +4,10 @@ import { appConfigSchema } from './schema';
 import type {
   AppConfig,
   GlobalCliOptions,
+  DeployMode,
   MappingConfig,
   ProfileConfig,
-  SyncMode,
+  SourceType,
 } from '../types';
 import { expandUserPath } from '../utils/path-utils';
 
@@ -19,7 +20,8 @@ import { expandUserPath } from '../utils/path-utils';
 export interface EffectiveMappingConfig extends MappingConfig {
   resolvedProfile: string;
   resolvedSyncId: string;
-  resolvedMode: 'git' | 'file' | 'link';
+  resolvedSourceType: SourceType;
+  resolvedDeployMode: DeployMode;
   resolvedConflict: NonNullable<ProfileConfig['conflict']>;
 }
 
@@ -81,14 +83,44 @@ export function resolveProfile(
   };
 }
 
-function resolveSyncMode(
-  mode: SyncMode | 'inherit' | undefined
-): 'git' | 'file' | 'link' {
-  if (!mode || mode === 'inherit' || mode === 'auto') {
-    return 'file';
+/**
+ * Resolves the effective source type for a mapping.
+ *
+ * @param {SourceType | 'inherit' | undefined} sourceType - Requested source type
+ * @returns {SourceType} Effective source type
+ * @example
+ * const sourceType = resolveSourceType('inherit');
+ * @since 0.1.0
+ * @category Config
+ */
+function resolveSourceType(
+  sourceType: SourceType | 'inherit' | undefined
+): SourceType {
+  if (!sourceType || sourceType === 'inherit') {
+    return 'auto';
   }
 
-  return mode;
+  return sourceType;
+}
+
+/**
+ * Resolves the effective deploy mode for a mapping.
+ *
+ * @param {DeployMode | 'inherit' | undefined} deployMode - Requested deployment mode
+ * @returns {DeployMode} Effective deployment mode
+ * @example
+ * const mode = resolveDeployMode('inherit');
+ * @since 0.1.0
+ * @category Config
+ */
+function resolveDeployMode(
+  deployMode: DeployMode | 'inherit' | undefined
+): DeployMode {
+  if (!deployMode || deployMode === 'inherit') {
+    return 'copy';
+  }
+
+  return deployMode;
 }
 
 /**
@@ -110,15 +142,19 @@ export function resolveMapping(
 ): EffectiveMappingConfig {
   const resolvedProfileName = options.profile ?? mapping.profile ?? 'default';
   const profile = resolveProfile(config, resolvedProfileName);
-  const effectiveMode = resolveSyncMode(
-    options.mode ?? mapping.mode ?? profile.mode
+  const effectiveSourceType = resolveSourceType(
+    options.sourceType ?? mapping.sourceType ?? profile.sourceType
+  );
+  const effectiveDeployMode = resolveDeployMode(
+    options.deployMode ?? mapping.deployMode ?? profile.deployMode
   );
 
   return {
     ...mapping,
     resolvedProfile: resolvedProfileName,
     resolvedSyncId: profile.syncId ?? config.syncId,
-    resolvedMode: effectiveMode,
+    resolvedSourceType: effectiveSourceType,
+    resolvedDeployMode: effectiveDeployMode,
     resolvedConflict: mapping.conflict ?? profile.conflict ?? FALLBACK_CONFLICT,
   };
 }

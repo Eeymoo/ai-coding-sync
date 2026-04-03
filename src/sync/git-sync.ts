@@ -15,6 +15,20 @@ export interface GitSyncResult {
 }
 
 /**
+ * Resolves the source directory used for git inspection.
+ *
+ * @param {MappingConfig} mapping - Mapping being synchronized
+ * @returns {string} Source directory path
+ * @example
+ * const root = resolveGitSourceRoot(mapping);
+ * @since 0.1.0
+ * @category Sync
+ */
+function resolveGitSourceRoot(mapping: MappingConfig): string {
+  return mapping.sourcePath ?? mapping.local;
+}
+
+/**
  * Executes Git-mode synchronization for a mapping.
  *
  * @param {MappingConfig} mapping - Mapping to synchronize
@@ -27,7 +41,8 @@ export interface GitSyncResult {
 export async function syncGitMapping(
   mapping: MappingConfig
 ): Promise<GitSyncResult> {
-  const gitPath = join(mapping.local, '.git');
+  const sourceRoot = resolveGitSourceRoot(mapping);
+  const gitPath = join(sourceRoot, '.git');
   let isGitRepository = false;
   let isDirty = false;
 

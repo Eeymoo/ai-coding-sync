@@ -1,5 +1,5 @@
-import { mkdir, symlink } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { mkdir, rm, symlink } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import type { MappingConfig } from '../types';
 
 /**
@@ -15,6 +15,20 @@ export interface LinkSyncResult {
 }
 
 /**
+ * Resolves the source directory for link deployment.
+ *
+ * @param {MappingConfig} mapping - Mapping being synchronized
+ * @returns {string} Source directory path
+ * @example
+ * const root = resolveLinkSourceRoot(mapping);
+ * @since 0.1.0
+ * @category Sync
+ */
+function resolveLinkSourceRoot(mapping: MappingConfig): string {
+  return mapping.sourcePath ?? mapping.local;
+}
+
+/**
  * Executes Link-mode synchronization for a mapping.
  *
  * @param {MappingConfig} mapping - Mapping to synchronize
@@ -27,20 +41,15 @@ export interface LinkSyncResult {
 export async function syncLinkMapping(
   mapping: MappingConfig
 ): Promise<LinkSyncResult> {
-  const cacheRoot = mapping.preSync ?? '~/.config/ai-coding-sync/cache/links';
-  const cachePath = join(cacheRoot, mapping.name);
+  const sourceRoot = resolveLinkSourceRoot(mapping);
 
-  await mkdir(cachePath, { recursive: true });
+  await mkdir(sourceRoot, { recursive: true });
   await mkdir(dirname(mapping.local), { recursive: true });
-
-  try {
-    await symlink(cachePath, mapping.local, 'dir');
-  } catch {
-    // Link may already exist or platform may reject duplicate creation in repeated runs.
-  }
+  await rm(mapping.local, { recursive: true, force: true });
+  await symlink(sourceRoot, mapping.local, 'dir');
 
   return {
-    cachePath,
+    cachePath: sourceRoot,
     linkPath: mapping.local,
     applied: true,
   };

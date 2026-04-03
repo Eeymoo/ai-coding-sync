@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  lstat,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { syncFileMapping } from '../src/sync/file-sync';
@@ -33,16 +40,19 @@ describe('advanced sync workflows', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('persists a manifest cache for file mode', async () => {
-    const localPath = join(tempRoot, 'claude');
-    await mkdir(localPath, { recursive: true });
-    await writeFile(join(localPath, 'settings.json'), '{"a":1}', 'utf8');
+  test('persists a manifest cache for copied source files', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'claude');
+    const targetPath = join(tempRoot, 'targets', 'claude');
+    await mkdir(sourcePath, { recursive: true });
+    await writeFile(join(sourcePath, 'settings.json'), '{"a":1}', 'utf8');
 
     const result = await syncFileMapping({
       name: 'claude',
-      local: localPath,
+      local: targetPath,
       remotePath: 'claude/v1',
-    });
+      sourcePath,
+      deployMode: 'copy',
+    } as MappingConfig);
 
     const manifestContent = await readFile(result.manifestPath, 'utf8');
     expect(JSON.parse(manifestContent).entries).toHaveLength(1);
@@ -57,16 +67,18 @@ describe('advanced sync workflows', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('reports dirty git repositories', async () => {
-    const localPath = join(tempRoot, 'repo');
-    await mkdir(join(localPath, '.git'), { recursive: true });
-    await writeFile(join(localPath, '.git', 'DIRTY'), '1', 'utf8');
+  test('reports dirty git repositories from source path', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'repo');
+    const targetPath = join(tempRoot, 'targets', 'repo');
+    await mkdir(join(sourcePath, '.git'), { recursive: true });
+    await writeFile(join(sourcePath, '.git', 'DIRTY'), '1', 'utf8');
 
     const result = await syncGitMapping({
       name: 'claude',
-      local: localPath,
+      local: targetPath,
       remotePath: 'claude/v1',
-    });
+      sourcePath,
+    } as MappingConfig);
 
     expect(result.isDirty).toBe(true);
   });
@@ -80,18 +92,20 @@ describe('advanced sync workflows', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('creates a symlink when applying link mode plan', async () => {
-    const localPath = join(tempRoot, 'cursor-link');
-    const cacheRoot = join(tempRoot, 'cache');
-    await mkdir(cacheRoot, { recursive: true });
+  test('creates a real symbolic link for link deploy mode', async () => {
+    const sourcePath = join(tempRoot, '.ai-coding-sync', 'cursor');
+    const targetPath = join(tempRoot, 'targets', 'cursor-link');
+    await mkdir(sourcePath, { recursive: true });
 
     const result = await syncLinkMapping({
       name: 'cursor',
-      local: localPath,
+      local: targetPath,
       remotePath: 'cursor/v1',
-      preSync: cacheRoot,
+      sourcePath,
+      deployMode: 'link',
     } as MappingConfig);
 
     expect(result.applied).toBe(true);
+    expect((await lstat(targetPath)).isSymbolicLink()).toBe(true);
   });
 });

@@ -45,13 +45,13 @@ describe('remaining cli workflows', () => {
   test('normalizes config set subcommand', async () => {
     const handler = mock(async () => undefined);
 
-    await runCli(['config', 'set', 'profiles.default.mode', 'git'], {
+    await runCli(['config', 'set', 'profiles.default.deployMode', 'copy'], {
       'config:set': handler,
     });
 
     expect(handler).toHaveBeenCalledWith({
       command: 'config:set',
-      args: ['profiles.default.mode', 'git'],
+      args: ['profiles.default.deployMode', 'copy'],
       options: {},
     });
   });
@@ -107,6 +107,35 @@ describe('remaining cli workflows', () => {
       options: {
         dryRun: true,
         profile: 'company',
+      },
+    });
+  });
+
+  /**
+   * Verifies sync command parses source and deploy overrides.
+   *
+   * @returns {Promise<void>} Promise resolved when assertion completes
+   * @example
+   * // Executed by Bun test
+   * @since 0.1.0
+   * @category Tests
+   */
+  test('parses sync command sourceType and deployMode flags', async () => {
+    const handler = mock(async () => undefined);
+
+    await runCli(
+      ['sync', 'claude', '--source-type', 'file', '--deploy-mode', 'copy'],
+      {
+        sync: handler,
+      }
+    );
+
+    expect(handler).toHaveBeenCalledWith({
+      command: 'sync',
+      args: ['claude'],
+      options: {
+        sourceType: 'file',
+        deployMode: 'copy',
       },
     });
   });

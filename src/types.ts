@@ -4,7 +4,15 @@
  * @since 0.1.0
  * @category Types
  */
-export type SyncMode = 'auto' | 'git' | 'file' | 'link';
+export type SourceType = 'auto' | 'git' | 'file';
+
+/**
+ * Supported deployment modes for applying synchronized content.
+ *
+ * @since 0.1.0
+ * @category Types
+ */
+export type DeployMode = 'link' | 'copy';
 
 /**
  * Supported synchronization strategies.
@@ -99,7 +107,8 @@ export interface ProfileConfig {
   inherit?: boolean;
   syncId?: string | null;
   webdav?: Partial<WebDavConfig>;
-  mode?: SyncMode;
+  sourceType?: SourceType;
+  deployMode?: DeployMode;
   strategy?: SyncStrategy;
   conflict?: ConflictPolicy;
   backupCount?: number;
@@ -115,8 +124,10 @@ export interface MappingConfig {
   name: string;
   local: string;
   remotePath: string;
+  sourcePath?: string;
   profile?: string;
-  mode?: SyncMode | 'inherit';
+  sourceType?: SourceType | 'inherit';
+  deployMode?: DeployMode | 'inherit';
   ignore?: string[];
   preSync?: string | null;
   postSync?: string | null;
@@ -160,7 +171,8 @@ export interface AppConfig {
  */
 export interface GlobalCliOptions {
   profile?: string;
-  mode?: SyncMode;
+  sourceType?: SourceType;
+  deployMode?: DeployMode;
   force?: boolean;
   yes?: boolean;
   dryRun?: boolean;

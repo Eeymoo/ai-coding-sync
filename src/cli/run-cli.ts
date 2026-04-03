@@ -26,6 +26,16 @@ const COMMAND_SET = new Set<CliCommandName>([
   'config:set',
 ]);
 
+/**
+ * Parses shared global CLI options from argv tokens.
+ *
+ * @param {string[]} args - Raw command arguments
+ * @returns {{ args: string[]; options: GlobalCliOptions }} Positional args and parsed options
+ * @example
+ * const parsed = parseGlobalOptions(['--profile', 'work']);
+ * @since 0.1.0
+ * @category CLI
+ */
 function parseGlobalOptions(args: string[]): {
   args: string[];
   options: GlobalCliOptions;
@@ -44,6 +54,14 @@ function parseGlobalOptions(args: string[]): {
     switch (token) {
       case '--profile':
         options.profile = args[index + 1];
+        index += 1;
+        break;
+      case '--source-type':
+        options.sourceType = args[index + 1] as GlobalCliOptions['sourceType'];
+        index += 1;
+        break;
+      case '--deploy-mode':
+        options.deployMode = args[index + 1] as GlobalCliOptions['deployMode'];
         index += 1;
         break;
       case '--dry-run':
@@ -66,6 +84,16 @@ function parseGlobalOptions(args: string[]): {
   return { args: positional, options };
 }
 
+/**
+ * Normalizes argv into a supported command and remainder tokens.
+ *
+ * @param {string[]} argv - Raw CLI tokens
+ * @returns {{ command: CliCommandName; remainder: string[] }} Normalized command tuple
+ * @example
+ * const normalized = normalizeCommand(['config', 'get', 'syncId']);
+ * @since 0.1.0
+ * @category CLI
+ */
 function normalizeCommand(argv: string[]): {
   command: CliCommandName;
   remainder: string[];

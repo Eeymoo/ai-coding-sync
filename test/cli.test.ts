@@ -17,18 +17,33 @@ describe('cli routing', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('parses status command with global options', async () => {
+  test('parses status command with source and deploy options', async () => {
     const handler = mock(async () => undefined);
 
-    await runCli(['status', 'claude', '--profile', 'company', '--dry-run'], {
-      status: handler,
-    });
+    await runCli(
+      [
+        'status',
+        'claude',
+        '--profile',
+        'company',
+        '--source-type',
+        'git',
+        '--deploy-mode',
+        'link',
+        '--dry-run',
+      ],
+      {
+        status: handler,
+      }
+    );
 
     expect(handler).toHaveBeenCalledWith({
       command: 'status',
       args: ['claude'],
       options: {
         profile: 'company',
+        sourceType: 'git',
+        deployMode: 'link',
         dryRun: true,
       },
     });
@@ -46,13 +61,13 @@ describe('cli routing', () => {
   test('normalizes config get subcommand', async () => {
     const handler = mock(async () => undefined);
 
-    await runCli(['config', 'get', 'profiles.default.mode'], {
+    await runCli(['config', 'get', 'profiles.default.sourceType'], {
       'config:get': handler,
     });
 
     expect(handler).toHaveBeenCalledWith({
       command: 'config:get',
-      args: ['profiles.default.mode'],
+      args: ['profiles.default.sourceType'],
       options: {},
     });
   });

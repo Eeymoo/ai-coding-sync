@@ -9,7 +9,7 @@
 
 基于 **Bun + TypeScript** 的命令行工具，用于通过 **WebDAV** 在多台设备之间同步 AI 编码工具配置与工作目录。
 
-它面向 `.claude`、`.cursor`、`.opencode` 等 AI 开发工具场景，支持多 profile、三种同步模式（Git / File / Link）、远程锁、安全扫描、钩子扩展与配置校验。
+它面向 `.claude`、`.cursor`、`.opencode` 等 AI 开发工具场景，支持多 profile、源目录类型与部署方式分离的同步模型（sourceType + deployMode）、远程锁、安全扫描、钩子扩展与配置校验。
 
 ## 为什么需要它
 
@@ -33,18 +33,18 @@
   - 使用 WebDAV 作为远程存储
   - 适合自建 NAS、坚果云、Nextcloud 等场景
 
-- **三种同步模式**
-  - `file`：直接按文件清单同步
-  - `git`：适合以 Git 仓库为主的配置同步
-  - `link`：适合以链接或引用关系组织本地内容
+- **二维同步模型**
+  - `sourceType`：描述 `.ai-coding-sync` 下源目录是否为 Git 仓库，可取 `auto` / `git` / `file`
+  - `deployMode`：描述部署到目标位置时使用 `link`（`ln -s`）或 `copy`（`cp`）
+  - 组合后形成 `git/file × link/copy` 的 2×2 同步矩阵
 
 - **多 profile 配置**
   - 支持不同设备、不同工作环境使用不同配置
-  - 可覆盖 mode、strategy、conflict、webdav 等选项
+  - 可覆盖 `sourceType`、`deployMode`、strategy、conflict、webdav 等选项
 
 - **多 mapping 管理**
   - 可同时同步多个本地目录到远端不同路径
-  - 每个 mapping 可独立配置 profile / mode / ignore / hooks
+  - 每个 mapping 可独立配置 profile / `sourceType` / `deployMode` / ignore / hooks
 
 - **安全与诊断**
   - 敏感信息扫描
@@ -140,8 +140,8 @@ bun run dev -- pull
 
 - `syncId`：标识当前设备
 - `webdav`：远端地址、认证与请求选项
-- `profiles`：按场景覆盖主配置
-- `mappings`：定义本地目录与远端目录的同步关系
+- `profiles`：按场景覆盖主配置，可定义默认 `sourceType` 与 `deployMode`
+- `mappings`：定义源目录、目标目录与远端目录的同步关系，并可单独覆盖源类型与部署方式
 - `ignoreGlobal`：全局忽略规则
 - `hooks`：同步生命周期钩子
 
@@ -169,18 +169,21 @@ bun run dev -- pull
   },
   "profiles": {
     "work": {
-      "mode": "git",
+      "sourceType": "git",
+      "deployMode": "link",
       "strategy": "two-way",
       "conflict": "backup"
     },
     "personal": {
-      "mode": "file",
+      "sourceType": "file",
+      "deployMode": "copy",
       "strategy": "push-only"
     }
   },
   "mappings": [
     {
       "name": "claude",
+      "sourcePath": "~/.ai-coding-sync/claude",
       "local": "~/.claude",
       "remotePath": "/configs/claude",
       "profile": "work",
@@ -188,9 +191,11 @@ bun run dev -- pull
     },
     {
       "name": "cursor",
+      "sourcePath": "~/.ai-coding-sync/cursor",
       "local": "~/.cursor",
       "remotePath": "/configs/cursor",
-      "mode": "file",
+      "sourceType": "auto",
+      "deployMode": "copy",
       "ignore": ["*.log", "*.tmp"]
     }
   ],
@@ -203,37 +208,72 @@ bun run dev -- pull
 }
 ```
 
-## 同步模式
+## 同步模型
 
-### `file`
+项目中的同步行为由两个正交维度组成，而不是单一 `mode`：
 
-直接扫描本地目录，生成文件清单并进行同步。
+### `sourceType`
+
+用于描述 `.ai-coding-sync` 下对应源目录的类型。
+
+#### `auto`
+
+自动检测源目录是否为 Git 仓库：如果存在 `.git`，则按 `git` 处理；否则按 `file` 处理。
+
+#### `git`
+
+显式声明源目录是 Git 仓库。
+
+适合：
+
+- 配置本身就放在仓库中
+- 希望保留版本历史、分支和提交上下文
+- 需要以仓库状态辅助同步策略
+
+#### `file`
+
+显式声明源目录只是普通文件目录，不依赖 Git 元数据。
 
 适合：
 
 - 普通配置目录
-- 不依赖 Git 历史的内容
-- 想快速稳定同步文件结构的场景
+- 不需要仓库语义的同步内容
+- 想直接管理纯文件结构的场景
 
-### `git`
+### `deployMode`
 
-以 Git 工作流为核心的同步模式。
+用于描述如何把 `.ai-coding-sync` 下的 `sourcePath` 源目录部署到 `local` 目标位置。
 
-适合：
+#### `link`
 
-- 配置本身就是仓库内容
-- 希望保留版本上下文
-- 更偏开发者工作流的同步场景
-
-### `link`
-
-用于处理链接型或引用型目录结构。
+使用 `ln -s` 将目标位置连接到源目录。
 
 适合：
 
-- 本地目录通过链接组织
-- 需要保留轻量引用关系
-- 特殊工作区布局
+- 希望所有真实内容都集中保存在 `.ai-coding-sync` 中
+- 目标位置只是一个入口
+- 希望修改源目录后立即在目标位置生效
+
+#### `copy`
+
+使用 `cp` 将源目录内容复制到目标位置，不依赖软链接。
+
+适合：
+
+- 不希望使用软链接
+- 目标程序对符号链接兼容性一般
+- 希望目标位置保留实体文件副本
+
+### 组合关系
+
+默认建议把所有真实配置放在 `~/.ai-coding-sync/<mapping-name>` 之类的源目录中，再通过 `sourcePath -> local` 的方式进行部署。
+
+最终同步行为是一个 2×2 矩阵：
+
+- `git + link`
+- `git + copy`
+- `file + link`
+- `file + copy`
 
 ## CLI 命令
 
@@ -252,19 +292,22 @@ bun run dev -- pull
 
 ### 全局选项
 
-| Option             | Description              |
-| ------------------ | ------------------------ |
-| `--profile <name>` | 使用指定 profile         |
-| `--dry-run`        | 预览操作，不执行真实写入 |
-| `--force`          | 跳过部分保护性确认       |
-| `--yes`            | 自动确认提示             |
-| `--verbose`        | 输出更详细日志           |
+| Option                 | Description                     |
+| ---------------------- | ------------------------------- |
+| `--profile <name>`     | 使用指定 profile                |
+| `--source-type <type>` | 覆盖源目录类型（auto/git/file） |
+| `--deploy-mode <mode>` | 覆盖部署方式（link/copy）       |
+| `--dry-run`            | 预览操作，不执行真实写入        |
+| `--force`              | 跳过部分保护性确认              |
+| `--yes`                | 自动确认提示                    |
+| `--verbose`            | 输出更详细日志                  |
 
 ### 示例
 
 ```bash
 bun run dev -- status
 bun run dev -- sync --profile work
+bun run dev -- sync --source-type auto --deploy-mode link
 bun run dev -- push --dry-run
 bun run dev -- doctor --verbose
 bun run dev -- config get webdav.endpoint

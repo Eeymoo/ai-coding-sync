@@ -65,7 +65,8 @@ describe('configuration loading and resolution', () => {
       profiles: {
         default: {
           inherit: true,
-          mode: 'auto',
+          sourceType: 'auto',
+          deployMode: 'link',
           strategy: 'two-way',
           conflict: 'ask',
           backupCount: 5,
@@ -117,7 +118,8 @@ describe('configuration loading and resolution', () => {
       profiles: {
         default: {
           inherit: true,
-          mode: 'auto',
+          sourceType: 'auto',
+          deployMode: 'link',
           strategy: 'two-way',
           conflict: 'ask',
           backupCount: 5,
@@ -125,7 +127,8 @@ describe('configuration loading and resolution', () => {
         company: {
           inherit: true,
           syncId: 'workstation-01',
-          mode: 'git',
+          sourceType: 'git',
+          deployMode: 'copy',
           conflict: 'remote',
         },
       },
@@ -136,7 +139,8 @@ describe('configuration loading and resolution', () => {
 
     expect(resolveProfile(config, 'company')).toEqual({
       inherit: true,
-      mode: 'git',
+      sourceType: 'git',
+      deployMode: 'copy',
       strategy: 'two-way',
       conflict: 'remote',
       backupCount: 5,
@@ -145,7 +149,7 @@ describe('configuration loading and resolution', () => {
   });
 
   /**
-   * Verifies mapping resolution applies profile and CLI overrides.
+   * Verifies mapping resolution applies profile and CLI source/deploy overrides.
    *
    * @returns {void} No return value
    * @example
@@ -153,7 +157,7 @@ describe('configuration loading and resolution', () => {
    * @since 0.1.0
    * @category Tests
    */
-  test('resolves effective mapping with overrides and auto mode fallback', () => {
+  test('resolves effective mapping with sourceType and deployMode overrides', () => {
     const config: AppConfig = {
       version: '1.0.0',
       syncId: 'device-a',
@@ -176,7 +180,8 @@ describe('configuration loading and resolution', () => {
       profiles: {
         default: {
           inherit: true,
-          mode: 'auto',
+          sourceType: 'auto',
+          deployMode: 'link',
           strategy: 'two-way',
           conflict: 'ask',
           backupCount: 5,
@@ -184,7 +189,8 @@ describe('configuration loading and resolution', () => {
         company: {
           inherit: true,
           syncId: 'workstation-01',
-          mode: 'git',
+          sourceType: 'git',
+          deployMode: 'copy',
           conflict: 'remote',
         },
       },
@@ -197,18 +203,83 @@ describe('configuration loading and resolution', () => {
       local: '~/.claude',
       remotePath: 'claude/v1',
       profile: 'company',
-      mode: 'inherit',
+      sourceType: 'inherit',
+      deployMode: 'inherit',
       conflict: 'backup',
     };
 
     expect(
-      resolveMapping(config, mapping, { profile: 'company', mode: 'file' })
+      resolveMapping(config, mapping, {
+        profile: 'company',
+        sourceType: 'file',
+        deployMode: 'link',
+      })
     ).toMatchObject({
       name: 'claude',
       resolvedProfile: 'company',
       resolvedSyncId: 'workstation-01',
-      resolvedMode: 'file',
+      resolvedSourceType: 'file',
+      resolvedDeployMode: 'link',
       resolvedConflict: 'backup',
+    });
+  });
+
+  /**
+   * Verifies auto source type remains unresolved until runtime detection.
+   *
+   * @returns {void} No return value
+   * @example
+   * // Executed by Bun test
+   * @since 0.1.0
+   * @category Tests
+   */
+  test('keeps auto sourceType when no explicit override is provided', () => {
+    const config: AppConfig = {
+      version: '1.0.0',
+      syncId: 'device-a',
+      webdav: {
+        endpoint: 'https://nas.example.com/webdav',
+        auth: {
+          type: 'env',
+          username: '${WEBDAV_USER}',
+          password: '${WEBDAV_PASS}',
+        },
+        remoteRoot: '/ai-sync/${syncId}',
+        options: {
+          depth: 'infinity',
+          verifySsl: true,
+          timeout: 30000,
+          maxRetries: 3,
+          concurrency: 2,
+        },
+      },
+      profiles: {
+        default: {
+          inherit: true,
+          sourceType: 'auto',
+          deployMode: 'link',
+          strategy: 'two-way',
+          conflict: 'ask',
+          backupCount: 5,
+        },
+      },
+      mappings: [],
+      ignoreGlobal: [],
+      hooks: {},
+    };
+
+    const mapping: MappingConfig = {
+      name: 'cursor',
+      local: '~/.cursor',
+      remotePath: 'cursor/v1',
+      profile: 'default',
+      sourceType: 'inherit',
+      deployMode: 'inherit',
+    };
+
+    expect(resolveMapping(config, mapping, {})).toMatchObject({
+      resolvedSourceType: 'auto',
+      resolvedDeployMode: 'copy',
     });
   });
 });
