@@ -1,6 +1,6 @@
 # AI-Coding-Sync
 
-> Last Updated: 2026-04-03 10:58
+> Last Updated: 2026-04-03 13:35
 
 ## Overview
 
@@ -115,14 +115,15 @@ The repository now includes an automated GitHub Pages publishing workflow that:
 
 1. Installs dependencies with Bun
 2. Runs `bun run check`
-3. Runs `bun test --coverage`
-4. Builds TypeDoc output
-5. Publishes the generated TypeDoc site from `docs/` directly to GitHub Pages, including API references and project documentation.
+3. Builds TypeDoc output with `bun run docs`
+4. Uploads the generated `docs/` directory as the GitHub Pages artifact
+5. Publishes API references and project documentation directly from TypeDoc output
 
 ### Commands
 
 ```bash
 bun run docs          # Generate TypeDoc API docs
+bun run docs:check    # Generate TypeDoc JSON and validate docs output
 ```
 
 ## CLI Usage
@@ -194,6 +195,8 @@ bun run dev -- --help
 bun run typecheck
 bun run lint
 bun run format:check
+bun run docs
 bun run docs:check
 bun test
+bun run check
 ```
