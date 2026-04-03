@@ -50,6 +50,13 @@ jobs:
         run: bun run build
 
       - name: Publish to npm
-        run: npm publish
+        run: |
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+
+          if [[ "$PACKAGE_VERSION" == *-* ]]; then
+            npm publish --tag alpha
+          else
+            npm publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
