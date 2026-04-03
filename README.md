@@ -191,17 +191,10 @@ bun run dev -- pull
       "local": "~/.cursor",
       "remotePath": "/configs/cursor",
       "mode": "file",
-      "ignore": [
-        "*.log",
-        "*.tmp"
-      ]
+      "ignore": ["*.log", "*.tmp"]
     }
   ],
-  "ignoreGlobal": [
-    ".DS_Store",
-    "*.swp",
-    "*.tmp"
-  ],
+  "ignoreGlobal": [".DS_Store", "*.swp", "*.tmp"],
   "hooks": {
     "pre-sync": null,
     "post-sync": null,
@@ -217,6 +210,7 @@ bun run dev -- pull
 直接扫描本地目录，生成文件清单并进行同步。
 
 适合：
+
 - 普通配置目录
 - 不依赖 Git 历史的内容
 - 想快速稳定同步文件结构的场景
@@ -226,6 +220,7 @@ bun run dev -- pull
 以 Git 工作流为核心的同步模式。
 
 适合：
+
 - 配置本身就是仓库内容
 - 希望保留版本上下文
 - 更偏开发者工作流的同步场景
@@ -235,6 +230,7 @@ bun run dev -- pull
 用于处理链接型或引用型目录结构。
 
 适合：
+
 - 本地目录通过链接组织
 - 需要保留轻量引用关系
 - 特殊工作区布局
@@ -243,26 +239,26 @@ bun run dev -- pull
 
 ### 基本命令
 
-| Command | Description |
-|---|---|
-| `init` | 初始化配置并测试首轮连接 |
-| `sync` | 执行默认双向同步流程 |
-| `push` | 将本地内容推送到远端 |
-| `pull` | 将远端内容拉取到本地 |
-| `status` | 查看同步状态与映射信息 |
-| `doctor` | 诊断环境、配置与依赖问题 |
-| `config get <key>` | 读取配置项 |
-| `config set <key> <value>` | 修改配置项 |
+| Command                    | Description              |
+| -------------------------- | ------------------------ |
+| `init`                     | 初始化配置并测试首轮连接 |
+| `sync`                     | 执行默认双向同步流程     |
+| `push`                     | 将本地内容推送到远端     |
+| `pull`                     | 将远端内容拉取到本地     |
+| `status`                   | 查看同步状态与映射信息   |
+| `doctor`                   | 诊断环境、配置与依赖问题 |
+| `config get <key>`         | 读取配置项               |
+| `config set <key> <value>` | 修改配置项               |
 
 ### 全局选项
 
-| Option | Description |
-|---|---|
-| `--profile <name>` | 使用指定 profile |
-| `--dry-run` | 预览操作，不执行真实写入 |
-| `--force` | 跳过部分保护性确认 |
-| `--yes` | 自动确认提示 |
-| `--verbose` | 输出更详细日志 |
+| Option             | Description              |
+| ------------------ | ------------------------ |
+| `--profile <name>` | 使用指定 profile         |
+| `--dry-run`        | 预览操作，不执行真实写入 |
+| `--force`          | 跳过部分保护性确认       |
+| `--yes`            | 自动确认提示             |
+| `--verbose`        | 输出更详细日志           |
 
 ### 示例
 
