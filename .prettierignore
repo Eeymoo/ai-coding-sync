@@ -1,0 +1,11 @@
+node_modules/
+coverage/
+docs/
+docs-site/api/
+.tmp/
+dist/
+.env
+.DS_Store
+.claude/
+docs-site/data/
+docs-site/index.html

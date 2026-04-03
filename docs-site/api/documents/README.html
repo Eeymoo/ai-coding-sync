@@ -1,0 +1,353 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>README | ai-coding-sync</title><meta name="description" content="Documentation for ai-coding-sync"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">ai-coding-sync</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">README</a></li></ul></div><div class="tsd-panel tsd-typography"><h1 id="ai-coding-sync" class="tsd-anchor-link">AI-Coding-Sync<a href="#ai-coding-sync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<blockquote>
+<p>Last Updated: 2026-04-03 10:58</p>
+</blockquote>
+<h2 id="overview" class="tsd-anchor-link">Overview<a href="#overview" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>AI-Coding-Sync 是一个基于 Bun.js 的 AI 开发配置同步 CLI 工具，用于将 <code>.claude</code>、<code>.opencode</code>、<code>.cursor</code> 等 AI 工具配置通过 WebDAV 在多设备之间同步，支持 Git / File / Link 三种同步模式、多 profile 配置、并发锁、安全扫描与钩子扩展。</p>
+<h2 id="requirements-confirmed" class="tsd-anchor-link">Requirements Confirmed<a href="#requirements-confirmed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<blockquote>
+<p>[DONE] Confirmed by user on 2026-04-03 10:59</p>
+</blockquote>
+<h3 id="core-features" class="tsd-anchor-link">Core Features<a href="#core-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>配置初始化向导：支持 <code>init</code> 交互式生成配置与首次连接测试。</li>
+<li>配置管理：支持主配置、profiles、mappings、变量替换与凭证策略。</li>
+<li>WebDAV 同步：支持 <code>sync</code> / <code>push</code> / <code>pull</code> / <code>status</code> / <code>doctor</code> / <code>config get</code> / <code>config set</code>。</li>
+<li>三模式同步：本次按完整规范实现 Git / File / Link 三种模式的核心能力。</li>
+<li>多设备管理：支持 <code>syncId</code>、设备隔离目录、共享目录锁与并发控制。</li>
+<li>安全能力：支持敏感信息扫描、默认敏感文件忽略、日志脱敏、SSL 校验控制。</li>
+<li>恢复能力：支持错误码体系、重试、备份与回滚。</li>
+<li>文档能力：README 持续维护，JSDoc/TypeDoc 配置与文档脚本落地。</li>
+</ul>
+<h3 id="technical-stack" class="tsd-anchor-link">Technical Stack<a href="#technical-stack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>Runtime: Bun</li>
+<li>Language: TypeScript</li>
+<li>CLI: Bun-based CLI with a lightweight parser library</li>
+<li>Validation: Zod</li>
+<li>Test Framework: Bun test</li>
+<li>Output: TTY 人类可读输出 + 非 TTY JSON Lines 输出</li>
+<li>Primary Platform: 标准 bash / Unix-like 环境（Linux/macOS/类 Unix），Windows 后续补充</li>
+</ul>
+<h3 id="uncertainties-resolved" class="tsd-anchor-link">Uncertainties Resolved<a href="#uncertainties-resolved" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交付范围</td>
+<td>Full spec now</td>
+<td>一次性交付完整规范能力，而不是仅做 MVP</td>
+</tr>
+<tr>
+<td>运行时约束</td>
+<td>Bun only</td>
+<td>功能实现以 Bun 为主</td>
+</tr>
+<tr>
+<td>实现语言</td>
+<td>TypeScript</td>
+<td>作为主要开发语言</td>
+</tr>
+<tr>
+<td>首版平台支持</td>
+<td>Unix-like</td>
+<td>Linux/macOS/标准 bash 环境优先，Windows 后续补充</td>
+</tr>
+<tr>
+<td>CLI 参数解析</td>
+<td>Use tiny library</td>
+<td>允许引入一个轻量 CLI 解析库</td>
+</tr>
+<tr>
+<td>配置校验</td>
+<td>Use Zod</td>
+<td>使用 Zod 进行 schema 校验</td>
+</tr>
+<tr>
+<td>测试框架</td>
+<td>Bun test</td>
+<td>使用 Bun test 覆盖核心逻辑与 CLI 行为</td>
+</tr>
+<tr>
+<td>输出格式</td>
+<td>TTY+JSON</td>
+<td>TTY 文本 + 非 TTY JSON 行</td>
+</tr>
+<tr>
+<td>当前目录策略</td>
+<td>Initialize here</td>
+<td>直接在当前空目录初始化完整项目</td>
+</tr>
+<tr>
+<td>文档交付</td>
+<td>Full docs</td>
+<td>README + JSDoc/TypeDoc + 文档脚本全部落地</td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td>Implement now</td>
+<td>本版实现 WebDAV 锁文件、TTL 与心跳机制</td>
+</tr>
+<tr>
+<td>Git/Link 模式优先级</td>
+<td>Implement core now</td>
+<td>本版实现 Git 模式与 Link 模式核心流程</td>
+</tr>
+</tbody>
+</table>
+<h2 id="checklist-progress" class="tsd-anchor-link">Checklist Progress<a href="#checklist-progress" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="overall-status" class="tsd-anchor-link">Overall Status<a href="#overall-status" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>Total: 39 items</li>
+<li>Completed: 39 items</li>
+<li>Progress: 100%</li>
+</ul>
+<h3 id="checklist-focus-areas" class="tsd-anchor-link">Checklist Focus Areas<a href="#checklist-focus-areas" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>[x] Project foundations and tooling</li>
+<li>[x] CLI and configuration resolution</li>
+<li>[x] Credentials and security controls</li>
+<li>[x] WebDAV client and distributed locking</li>
+<li>[x] File / Git / Link sync modes</li>
+<li>[x] UX, hooks, diagnostics, and error model</li>
+<li>[x] Tests, docs, and final verification</li>
+</ul>
+<h2 id="development-log" class="tsd-anchor-link">Development Log<a href="#development-log" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Phase</th>
+<th>Status</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-04-03</td>
+<td>Requirements</td>
+<td>[DONE] Confirmed</td>
+<td>用户已确认需求范围与技术约束</td>
+</tr>
+<tr>
+<td>2026-04-03</td>
+<td>Checklist</td>
+<td>[DONE] Created</td>
+<td>已生成 39 项实现与验证清单</td>
+</tr>
+<tr>
+<td>2026-04-03</td>
+<td>Architecture</td>
+<td>[DONE] Skeleton</td>
+<td>已创建目录结构、工具配置与 TODO 骨架</td>
+</tr>
+<tr>
+<td>2026-04-03</td>
+<td>TDD</td>
+<td>[DONE] Core implementation</td>
+<td>已完成核心模块实现、测试与文档生成</td>
+</tr>
+</tbody>
+</table>
+<h2 id="technical-decisions" class="tsd-anchor-link">Technical Decisions<a href="#technical-decisions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Choice</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime baseline</td>
+<td>Bun</td>
+<td>满足零依赖运行时方向与高性能文件/网络 API</td>
+</tr>
+<tr>
+<td>Type safety</td>
+<td>TypeScript + Zod</td>
+<td>提升配置与同步逻辑可维护性</td>
+</tr>
+<tr>
+<td>Test tool</td>
+<td>Bun test</td>
+<td>与运行时统一，降低工具链复杂度</td>
+</tr>
+<tr>
+<td>Platform priority</td>
+<td>Unix-like first</td>
+<td>与标准 bash 场景更匹配，便于先完成稳定版本</td>
+</tr>
+</tbody>
+</table>
+<h2 id="project-structure" class="tsd-anchor-link">Project Structure<a href="#project-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="text">src/
+├── cli/          # CLI routing and command handlers
+├── config/       # Config loading, schema validation, interpolation
+├── credentials/  # Credential providers and secret lookup
+├── hooks/        # Lifecycle hook execution
+├── output/       # Progress and output formatting
+├── security/     # Secret scanning and redaction
+├── sync/         # File / Git / Link sync modes
+├── utils/        # Shared utilities and errors
+├── webdav/       # WebDAV client and locking
+├── index.ts      # CLI entrypoint
+└── types.ts      # Shared type definitions
+
+test/
+└── smoke.test.ts # Initial Bun test wiring
+</code><button type="button">Copy</button></pre>
+
+<h2 id="api-documentation" class="tsd-anchor-link">API Documentation<a href="#api-documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li>Generated API docs: <code>docs/</code></li>
+<li>Published static docs portal: <code>docs-site/</code></li>
+<li>Docs metrics JSON: <code>docs-site/data/metrics.json</code></li>
+<li>GitHub Actions workflow: <code>.github/workflows/publish-docs.yml</code></li>
+</ul>
+<h3 id="publish-pipeline" class="tsd-anchor-link">Publish Pipeline<a href="#publish-pipeline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>The repository now includes an automated GitHub Pages publishing workflow that:</p>
+<ol>
+<li>Installs dependencies with Bun</li>
+<li>Runs <code>bun run check</code></li>
+<li>Runs <code>bun test --coverage</code></li>
+<li>Builds TypeDoc output</li>
+<li>Builds a docs portal page that publishes:
+<ul>
+<li>JSDoc/TypeDoc API docs</li>
+<li>coverage summary</li>
+<li>test pass/fail summary</li>
+<li>verification status</li>
+</ul>
+</li>
+</ol>
+<h3 id="commands" class="tsd-anchor-link">Commands<a href="#commands" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">docs</span><span class="hl-1">          </span><span class="hl-3"># Generate TypeDoc API docs</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">docs:metrics</span><span class="hl-1">  </span><span class="hl-3"># Generate docs metrics JSON</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">docs:site</span><span class="hl-1">     </span><span class="hl-3"># Build publishable docs site</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="cli-usage" class="tsd-anchor-link">CLI Usage<a href="#cli-usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="basic-usage" class="tsd-anchor-link">Basic Usage<a href="#basic-usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> &lt;</span><span class="hl-2">comman</span><span class="hl-1">d&gt; [options]</span><br/><span class="hl-0">ai-coding-sync</span><span class="hl-1"> &lt;</span><span class="hl-2">comman</span><span class="hl-1">d&gt; [options]</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="supported-commands" class="tsd-anchor-link">Supported Commands<a href="#supported-commands" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init</code></td>
+<td>Initialize configuration interactively and validate the first connection</td>
+</tr>
+<tr>
+<td><code>sync</code></td>
+<td>Run the default bidirectional synchronization flow</td>
+</tr>
+<tr>
+<td><code>push</code></td>
+<td>Push local changes to the remote WebDAV target</td>
+</tr>
+<tr>
+<td><code>pull</code></td>
+<td>Pull remote changes into the local workspace</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>Show sync status, mapping state, and pending diagnostics</td>
+</tr>
+<tr>
+<td><code>doctor</code></td>
+<td>Run environment and configuration diagnostics</td>
+</tr>
+<tr>
+<td><code>config get &lt;key&gt;</code></td>
+<td>Read a configuration value</td>
+</tr>
+<tr>
+<td><code>config set &lt;key&gt; &lt;value&gt;</code></td>
+<td>Update a configuration value</td>
+</tr>
+</tbody>
+</table>
+<h3 id="global-options" class="tsd-anchor-link">Global Options<a href="#global-options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>These options are documented by the CLI parser and shared through the <code>GlobalCliOptions</code> type in the generated API docs.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--profile &lt;name&gt;</code></td>
+<td>Use a named profile override for the current command</td>
+</tr>
+<tr>
+<td><code>--dry-run</code></td>
+<td>Preview actions without changing remote or local files</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Continue even when a command would normally require confirmation</td>
+</tr>
+<tr>
+<td><code>--yes</code></td>
+<td>Auto-confirm prompts when supported</td>
+</tr>
+<tr>
+<td><code>--verbose</code></td>
+<td>Emit more detailed CLI output for debugging</td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples" class="tsd-anchor-link">Examples<a href="#examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<pre><code class="bash"><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">status</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">sync</span><span class="hl-1"> </span><span class="hl-4">--profile</span><span class="hl-1"> </span><span class="hl-2">work</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">push</span><span class="hl-1"> </span><span class="hl-4">--dry-run</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">doctor</span><span class="hl-1"> </span><span class="hl-4">--verbose</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">config</span><span class="hl-1"> </span><span class="hl-2">get</span><span class="hl-1"> </span><span class="hl-2">webdav.endpoint</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-2">config</span><span class="hl-1"> </span><span class="hl-2">set</span><span class="hl-1"> </span><span class="hl-2">syncId</span><span class="hl-1"> </span><span class="hl-2">macbook-pro</span>
+</code><button type="button">Copy</button></pre>
+
+<h3 id="cli-documentation-coverage" class="tsd-anchor-link">CLI Documentation Coverage<a href="#cli-documentation-coverage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li>CLI entrypoint: <code>src/index.ts</code></li>
+<li>CLI parser and dispatcher: <code>src/cli/run-cli.ts</code></li>
+<li>Shared CLI option types: <code>src/types.ts</code> (<code>CliCommandName</code>, <code>GlobalCliOptions</code>)</li>
+<li>CLI behavior tests: <code>test/cli.test.ts</code> and <code>test/cli-remaining.test.ts</code></li>
+</ul>
+<p>This means both the CLI API JSDoc and the human-readable CLI usage guide are included in the generated documentation set.</p>
+<h2 id="test-coverage" class="tsd-anchor-link">Test Coverage<a href="#test-coverage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Coverage</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Functions</td>
+<td>98.26%</td>
+<td>90%+</td>
+</tr>
+<tr>
+<td>Lines</td>
+<td>93.35%</td>
+<td>90%+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="running-the-project" class="tsd-anchor-link">Running the Project<a href="#running-the-project" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<pre><code class="bash"><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">install</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span><span class="hl-1"> </span><span class="hl-4">--</span><span class="hl-1"> </span><span class="hl-4">--help</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">typecheck</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">lint</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">format:check</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">docs:check</span><br/><span class="hl-0">bun</span><span class="hl-1"> </span><span class="hl-2">test</span>
+</code><button type="button">Copy</button></pre>
+
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#ai-coding-sync"><span>AI-<wbr/>Coding-<wbr/>Sync</span></a><ul><li><a href="#overview"><span>Overview</span></a></li><li><a href="#requirements-confirmed"><span>Requirements <wbr/>Confirmed</span></a></li><li><ul><li><a href="#core-features"><span>Core <wbr/>Features</span></a></li><li><a href="#technical-stack"><span>Technical <wbr/>Stack</span></a></li><li><a href="#uncertainties-resolved"><span>Uncertainties <wbr/>Resolved</span></a></li></ul></li><li><a href="#checklist-progress"><span>Checklist <wbr/>Progress</span></a></li><li><ul><li><a href="#overall-status"><span>Overall <wbr/>Status</span></a></li><li><a href="#checklist-focus-areas"><span>Checklist <wbr/>Focus <wbr/>Areas</span></a></li></ul></li><li><a href="#development-log"><span>Development <wbr/>Log</span></a></li><li><a href="#technical-decisions"><span>Technical <wbr/>Decisions</span></a></li><li><a href="#project-structure"><span>Project <wbr/>Structure</span></a></li><li><a href="#api-documentation"><span>API <wbr/>Documentation</span></a></li><li><ul><li><a href="#publish-pipeline"><span>Publish <wbr/>Pipeline</span></a></li><li><a href="#commands"><span>Commands</span></a></li></ul></li><li><a href="#cli-usage"><span>CLI <wbr/>Usage</span></a></li><li><ul><li><a href="#basic-usage"><span>Basic <wbr/>Usage</span></a></li><li><a href="#supported-commands"><span>Supported <wbr/>Commands</span></a></li><li><a href="#global-options"><span>Global <wbr/>Options</span></a></li><li><a href="#examples"><span>Examples</span></a></li><li><a href="#cli-documentation-coverage"><span>CLI <wbr/>Documentation <wbr/>Coverage</span></a></li></ul></li><li><a href="#test-coverage"><span>Test <wbr/>Coverage</span></a></li><li><a href="#running-the-project"><span>Running the <wbr/>Project</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">ai-coding-sync</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

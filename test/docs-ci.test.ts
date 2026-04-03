@@ -32,6 +32,28 @@ describe('documentation publishing setup', () => {
   });
 
   /**
+   * Verifies the docs site builder publishes TypeDoc output into docs-site/api.
+   *
+   * @returns {void} No return value
+   * @example
+   * // Executed by Bun test
+   * @since 0.1.0
+   * @category Tests
+   */
+  test('copies generated TypeDoc output into the published docs site builder script', () => {
+    const builderScript = readFileSync(
+      join(root, 'scripts', 'build-docs-site.ts'),
+      'utf8'
+    );
+
+    expect(builderScript).toContain("join(docsSiteDirectory, 'api')");
+    expect(builderScript).toContain(
+      'await copyApiDocs(docsDirectory, apiOutputDirectory);'
+    );
+    expect(builderScript).toContain('./api/index.html');
+  });
+
+  /**
    * Verifies a GitHub Actions workflow publishes documentation artifacts.
    *
    * @returns {void} No return value
