@@ -1,6 +1,6 @@
 {
   "name": "@eeymoo/ai-coding-sync",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Bun-based CLI for syncing AI coding tool configuration over WebDAV.",
   "type": "module",
   "bin": {
