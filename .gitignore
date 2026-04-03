@@ -1,0 +1,7 @@
+node_modules/
+coverage/
+docs/
+.tmp/
+dist/
+.env
+.DS_Store

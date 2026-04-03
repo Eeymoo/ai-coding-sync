@@ -1,0 +1,37 @@
+{
+  "name": "ai-coding-sync",
+  "version": "0.1.0",
+  "description": "Bun-based CLI for syncing AI coding tool configuration over WebDAV.",
+  "type": "module",
+  "bin": {
+    "ai-coding-sync": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test --ext .ts",
+    "lint:fix": "eslint src test --ext .ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "docs": "typedoc",
+    "docs:check": "typedoc --json docs/api.json",
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run docs:check && bun run test",
+    "docs:metrics": "bun run scripts/generate-docs-metrics.ts",
+    "docs:site": "bun run docs && bun run test:coverage && bun run docs:metrics && bun run scripts/build-docs-site.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
+    "citty": "^0.1.6",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.1",
+    "prettier": "^3.5.3",
+    "typedoc": "^0.28.1",
+    "typescript": "^5.8.3",
+    "zod": "^3.24.2",
+    "typescript-eslint": "^8.58.0"
+  }
+}
