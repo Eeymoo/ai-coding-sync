@@ -1,10 +1,10 @@
 {
-  "name": "ai-coding-sync",
+  "name": "@eeymoo/ai-coding-sync",
   "version": "0.1.0",
   "description": "Bun-based CLI for syncing AI coding tool configuration over WebDAV.",
   "type": "module",
   "bin": {
-    "ai-coding-sync": "./src/index.ts"
+    "ai-coding-sync": "./dist/index.js"
   },
   "scripts": {
     "dev": "bun run src/index.ts",
@@ -17,7 +17,8 @@
     "test:coverage": "bun test --coverage",
     "docs": "typedoc",
     "docs:check": "typedoc --json docs/api.json",
-    "check": "bun run typecheck && bun run lint && bun run format:check && bun run docs:check && bun run test"
+    "check": "bun run typecheck && bun run lint && bun run format:check && bun run docs:check && bun run test",
+    "build": "bun build ./src/index.ts --outdir dist --target bun"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -32,5 +33,13 @@
     "zod": "^3.24.2",
     "typescript-eslint": "^8.58.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
