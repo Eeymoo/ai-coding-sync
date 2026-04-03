@@ -1,16 +1,10 @@
 {
-  "entryPoints": [
-    "src",
-    "test",
-    "README.md"
-  ],
+  "entryPoints": ["src", "test", "README.md"],
   "out": "docs",
   "tsconfig": "tsconfig.json",
   "excludePrivate": true,
   "excludeInternal": true,
   "readme": "README.md",
   "entryPointStrategy": "expand",
-  "projectDocuments": [
-    "README.md"
-  ]
+  "projectDocuments": ["README.md"]
 }

@@ -144,28 +144,28 @@ ai-coding-sync <command> [options]
 
 ### Supported Commands
 
-| Command | Description |
-| ------- | ----------- |
-| `init` | Initialize configuration interactively and validate the first connection |
-| `sync` | Run the default bidirectional synchronization flow |
-| `push` | Push local changes to the remote WebDAV target |
-| `pull` | Pull remote changes into the local workspace |
-| `status` | Show sync status, mapping state, and pending diagnostics |
-| `doctor` | Run environment and configuration diagnostics |
-| `config get <key>` | Read a configuration value |
-| `config set <key> <value>` | Update a configuration value |
+| Command                    | Description                                                              |
+| -------------------------- | ------------------------------------------------------------------------ |
+| `init`                     | Initialize configuration interactively and validate the first connection |
+| `sync`                     | Run the default bidirectional synchronization flow                       |
+| `push`                     | Push local changes to the remote WebDAV target                           |
+| `pull`                     | Pull remote changes into the local workspace                             |
+| `status`                   | Show sync status, mapping state, and pending diagnostics                 |
+| `doctor`                   | Run environment and configuration diagnostics                            |
+| `config get <key>`         | Read a configuration value                                               |
+| `config set <key> <value>` | Update a configuration value                                             |
 
 ### Global Options
 
 These options are documented by the CLI parser and shared through the `GlobalCliOptions` type in the generated API docs.
 
-| Option | Description |
-| ------ | ----------- |
-| `--profile <name>` | Use a named profile override for the current command |
-| `--dry-run` | Preview actions without changing remote or local files |
-| `--force` | Continue even when a command would normally require confirmation |
-| `--yes` | Auto-confirm prompts when supported |
-| `--verbose` | Emit more detailed CLI output for debugging |
+| Option             | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| `--profile <name>` | Use a named profile override for the current command             |
+| `--dry-run`        | Preview actions without changing remote or local files           |
+| `--force`          | Continue even when a command would normally require confirmation |
+| `--yes`            | Auto-confirm prompts when supported                              |
+| `--verbose`        | Emit more detailed CLI output for debugging                      |
 
 ### Examples
 
