@@ -133,6 +133,60 @@ bun run docs:metrics  # Generate docs metrics JSON
 bun run docs:site     # Build publishable docs site
 ```
 
+## CLI Usage
+
+### Basic Usage
+
+```bash
+bun run dev -- <command> [options]
+ai-coding-sync <command> [options]
+```
+
+### Supported Commands
+
+| Command | Description |
+| ------- | ----------- |
+| `init` | Initialize configuration interactively and validate the first connection |
+| `sync` | Run the default bidirectional synchronization flow |
+| `push` | Push local changes to the remote WebDAV target |
+| `pull` | Pull remote changes into the local workspace |
+| `status` | Show sync status, mapping state, and pending diagnostics |
+| `doctor` | Run environment and configuration diagnostics |
+| `config get <key>` | Read a configuration value |
+| `config set <key> <value>` | Update a configuration value |
+
+### Global Options
+
+These options are documented by the CLI parser and shared through the `GlobalCliOptions` type in the generated API docs.
+
+| Option | Description |
+| ------ | ----------- |
+| `--profile <name>` | Use a named profile override for the current command |
+| `--dry-run` | Preview actions without changing remote or local files |
+| `--force` | Continue even when a command would normally require confirmation |
+| `--yes` | Auto-confirm prompts when supported |
+| `--verbose` | Emit more detailed CLI output for debugging |
+
+### Examples
+
+```bash
+bun run dev -- status
+bun run dev -- sync --profile work
+bun run dev -- push --dry-run
+bun run dev -- doctor --verbose
+bun run dev -- config get webdav.endpoint
+bun run dev -- config set syncId macbook-pro
+```
+
+### CLI Documentation Coverage
+
+- CLI entrypoint: `src/index.ts`
+- CLI parser and dispatcher: `src/cli/run-cli.ts`
+- Shared CLI option types: `src/types.ts` (`CliCommandName`, `GlobalCliOptions`)
+- CLI behavior tests: `test/cli.test.ts` and `test/cli-remaining.test.ts`
+
+This means both the CLI API JSDoc and the human-readable CLI usage guide are included in the generated documentation set.
+
 ## Test Coverage
 
 | Metric    | Coverage | Target |
@@ -151,11 +205,3 @@ bun run format:check
 bun run docs:check
 bun test
 ```
-
-## Next Step
-
-等待你确认上述需求是否准确。确认后我将进入：
-
-1. Phase 0：创建 checklist
-2. 更新 README 与 `.tdt/checklist.md`
-3. 再向你请求 checklist 审批后进入架构阶段

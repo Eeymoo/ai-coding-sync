@@ -1,8 +1,16 @@
 {
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": [
+    "src",
+    "test",
+    "README.md"
+  ],
   "out": "docs",
   "tsconfig": "tsconfig.json",
   "excludePrivate": true,
   "excludeInternal": true,
-  "readme": "README.md"
+  "readme": "README.md",
+  "entryPointStrategy": "expand",
+  "projectDocuments": [
+    "README.md"
+  ]
 }
